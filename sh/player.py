@@ -10,7 +10,6 @@ class Player(Sprite):
     # animation changing
     def change_state(self):
         self.counter += 1
-        #print(self.counter)
         if self.counter < len(self.IMG_TUPLE):
             self.IMG = self.IMG_TUPLE[self.counter]
         else:

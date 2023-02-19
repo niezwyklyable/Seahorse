@@ -1,11 +1,9 @@
-from .constants import FACTOR
-
 class Sprite(): # an abstract class
     def __init__(self, IMG, TYPE, x, y): # x, y - centre pos
         self.IMG = IMG
         self.TYPE = TYPE
-        self.x = FACTOR * x
-        self.y = FACTOR * y
+        self.x = x
+        self.y = y
 
     def draw(self, win):
         win.blit(self.IMG, (self.x - self.IMG.get_width() // 2, \
