@@ -2,7 +2,7 @@ from pygame.image import load
 from pygame.transform import scale
 
 # screen refreshing frequency
-FPS = 30
+FPS = 60
 
 # screen dims and scale
 WIDTH, HEIGHT = 1500, 750

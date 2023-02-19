@@ -11,10 +11,10 @@ class Game():
     def render(self):
         # background
         self.win.fill(WHITE)
-        self.win.blit(LAYER_1, (0, 0))
-        self.win.blit(LAYER_2, (0, 0))
-        self.win.blit(LAYER_3, (0, 0))
-        self.win.blit(LAYER_4, (0, 0))
+        # self.win.blit(LAYER_1, (0, 0))
+        # self.win.blit(LAYER_2, (0, 0))
+        # self.win.blit(LAYER_3, (0, 0))
+        # self.win.blit(LAYER_4, (0, 0))
 
         # player
         if self.player:
@@ -23,7 +23,7 @@ class Game():
         pygame.display.update()
 
     def update(self):
-        pass
+        self.player.change_state()
 
     def create_player(self):
         self.player = Player(100, 250)
