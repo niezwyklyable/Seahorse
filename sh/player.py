@@ -22,11 +22,11 @@ class Player(Sprite):
         if dir == 'up':
             self.y -= self.dY
             # check boundaries
-            if self.y < UPPER_BOUNDARY:
-                self.y = UPPER_BOUNDARY
+            if self.y < UPPER_BOUNDARY + self.IMG.get_height()//2:
+                self.y = UPPER_BOUNDARY + self.IMG.get_height()//2
         elif dir == 'down':
             self.y += self.dY
             # check boundaries
-            if self.y > BOTTOM_BOUNDARY:
-                self.y = BOTTOM_BOUNDARY
+            if self.y > BOTTOM_BOUNDARY - self.IMG.get_height()//2:
+                self.y = BOTTOM_BOUNDARY - self.IMG.get_height()//2
             

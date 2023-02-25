@@ -11,8 +11,8 @@ WIDTH, HEIGHT = 1000, 500
 WHITE = (255, 255, 255)
 
 # boundaries
-UPPER_BOUNDARY = 100
-BOTTOM_BOUNDARY = 350
+UPPER_BOUNDARY = 10
+BOTTOM_BOUNDARY = 450
 
 # background
 BACKGROUND = load('assets/background.png') # 1768x500px
@@ -23,3 +23,8 @@ SH = []
 for i in range(4680//120):
     SH.append(PLAYER.subsurface(i*120, 0, 120, 192))
     
+# enemies
+ANGLER_1 = load('assets/angler1.png')
+ANGLER_1_STATE_1_LIST = []
+for i in range(8892//228):
+    ANGLER_1_STATE_1_LIST.append(ANGLER_1.subsurface(i*228, 0, 228, 170))
