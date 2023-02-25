@@ -1,17 +1,17 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
-    ANGLER_1_STATE_1_LIST
+    ANGLER_LIST
 from .player import Player
-from .angler import Angler_1
+from .angler import Angler
 import random
 
 class Game():
     def __init__(self, win):
         self.win = win
         self.player = None
-        self.angler_1 = None
+        self.angler = None
         self.create_player()
-        self.create_angler_1()
+        self.create_angler()
         self.bg1_x = 0
         self.bg2_x = BACKGROUND.get_width()
         
@@ -20,13 +20,13 @@ class Game():
         if self.player:
             self.player.change_state()
         
-        # angler_1
-        if self.angler_1:
-            self.angler_1.change_state()
-            self.angler_1.move()
+        # angler
+        if self.angler:
+            self.angler.change_state()
+            self.angler.move()
             # restart if it is out of screen
-            if self.angler_1.x < 0 - self.angler_1.IMG.get_width()//2:
-                self.create_angler_1()
+            if self.angler.x < 0 - self.angler.IMG.get_width()//2:
+                self.create_angler()
 
     def render(self):
         # background
@@ -44,18 +44,18 @@ class Game():
         if self.player:
             self.player.draw(self.win)
 
-        # angler_1
-        if self.angler_1:
-            self.angler_1.draw(self.win)
+        # angler
+        if self.angler:
+            self.angler.draw(self.win)
 
         pygame.display.update()
 
     def create_player(self):
         self.player = Player(100, 250)
 
-    def create_angler_1(self):
-        RANDOM_Y = random.choice(range(UPPER_BOUNDARY+ANGLER_1_STATE_1_LIST[0].get_height()//2, \
-            BOTTOM_BOUNDARY-ANGLER_1_STATE_1_LIST[0].get_height()//2+5,\
+    def create_angler(self):
+        RANDOM_Y = random.choice(range(UPPER_BOUNDARY+ANGLER_LIST[0].get_height()//2, \
+            BOTTOM_BOUNDARY-ANGLER_LIST[0].get_height()//2+5,\
             5))
-        self.angler_1 = Angler_1(WIDTH+ANGLER_1_STATE_1_LIST[0].get_width()//2,\
+        self.angler = Angler(WIDTH+ANGLER_LIST[0].get_width()//2,\
                                 RANDOM_Y)
