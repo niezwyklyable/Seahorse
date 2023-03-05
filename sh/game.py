@@ -19,6 +19,13 @@ class Game():
         # player
         if self.player:
             self.player.change_state()
+            # projectiles
+            if self.player.projectiles:
+                for p in self.player.projectiles:
+                    if p.x > WIDTH + p.IMG.get_width()//2:
+                        self.player.projectiles.remove(p) # delete if it is out of screen
+                    else:
+                        p.move()
         
         # angler
         if self.angler:
@@ -43,6 +50,10 @@ class Game():
         # player
         if self.player:
             self.player.draw(self.win)
+            # projectiles
+            if self.player.projectiles:
+                for p in self.player.projectiles:
+                    p.draw(self.win)
 
         # angler
         if self.angler:

@@ -21,7 +21,12 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 print(pos)
-    
+
+            # projectile launching trigger
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game.player.launch_projectile()
+
         # player steering trigger
         keys = pygame.key.get_pressed() # zwraca slownik z wartosciami typu bool
         if keys[pygame.K_w]:

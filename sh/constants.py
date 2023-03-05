@@ -28,3 +28,6 @@ ANGLER = load('assets/angler1.png')
 ANGLER_LIST = []
 for i in range(8892//228):
     ANGLER_LIST.append(ANGLER.subsurface(i*228, 0, 228, 170))
+
+# projectile
+PROJECTILE = load('assets/projectile.png')
