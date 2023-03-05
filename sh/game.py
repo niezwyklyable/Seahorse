@@ -1,6 +1,6 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
-    ANGLER_LIST
+    ANGLER_LIST, DIM_FACTOR
 from .player import Player
 from .angler import Angler
 import random
@@ -24,6 +24,9 @@ class Game():
                 for p in self.player.projectiles:
                     if p.x > WIDTH + p.IMG.get_width()//2:
                         self.player.projectiles.remove(p) # delete if it is out of screen
+                    elif self.collision_detection(p, self.angler): # check if it is collision with an angler
+                        self.player.projectiles.remove(p) # delete projectile because it exploded
+                        self.create_angler() # angler is dead so create a new one
                     else:
                         p.move()
         
@@ -70,3 +73,12 @@ class Game():
             5))
         self.angler = Angler(WIDTH+ANGLER_LIST[0].get_width()//2,\
                                 RANDOM_Y)
+        
+    def collision_detection(self, obj1, obj2):
+        if obj1.TYPE == 'PROJECTILE' and obj2.TYPE == 'ANGLER':
+            # check distances between positions of two objects in a range of the bigger object
+            if abs(obj1.x - obj2.x) <= obj2.IMG.get_width()//2*DIM_FACTOR and \
+                abs(obj1.y - obj2.y) <= obj2.IMG.get_height()//2*DIM_FACTOR:
+                return True
+            
+        return False

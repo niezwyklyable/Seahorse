@@ -14,6 +14,9 @@ WHITE = (255, 255, 255)
 UPPER_BOUNDARY = 10
 BOTTOM_BOUNDARY = 450
 
+# factors
+DIM_FACTOR = 0.8 # it decreases the base distance for collision detection method to make it more realistic and precisely
+
 # background
 BACKGROUND = load('assets/background.png') # 1768x500px
 
