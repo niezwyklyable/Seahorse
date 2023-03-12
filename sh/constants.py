@@ -25,13 +25,28 @@ BACKGROUND = load('assets/background.png') # 1768x500px
 PLAYER = load('assets/player.png')
 PLAYER_LIST = []
 for i in range(4680//120):
-    PLAYER_LIST.append(PLAYER.subsurface(i*120, 0, 120, 192))
+    PLAYER_LIST.append(PLAYER.subsurface(i*120, 0, 120, 190))
     
 # enemies
 ANGLER = load('assets/angler1.png')
 ANGLER_LIST = []
 for i in range(8892//228):
-    ANGLER_LIST.append(ANGLER.subsurface(i*228, 0, 228, 170))
+    ANGLER_LIST.append(ANGLER.subsurface(i*228, 0, 228, 169))
+
+DRONE = load('assets/drone.png')
+DRONE_LIST = []
+for i in range(4485//115):
+    DRONE_LIST.append(DRONE.subsurface(i*115, 0, 115, 95))
+
+HIVEWHALE = load('assets/hivewhale.png')
+HIVEWHALE_LIST = []
+for i in range(15600//400):
+    HIVEWHALE_LIST.append(HIVEWHALE.subsurface(i*400, 0, 400, 227))
+
+LUCKY = load('assets/lucky.png')
+LUCKY_LIST = []
+for i in range(3861//99):
+    LUCKY_LIST.append(LUCKY.subsurface(i*99, 0, 99, 95))
 
 # projectile
 PROJECTILE = load('assets/projectile.png')
