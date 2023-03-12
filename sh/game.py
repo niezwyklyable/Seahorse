@@ -1,6 +1,6 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
-    ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST
+    ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR
 from .player import Player
 from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
@@ -13,14 +13,34 @@ class Game():
         self.enemies = []
         self.explosions = []
         self.create_player()
-        self.create_angler() # DELETE THIS LINE AFTER DEVELOPING RANDOM FISH CREATING
-        self.create_drone() # DELETE THIS LINE AFTER DEVELOPING RANDOM FISH CREATING
-        self.create_hivewhale() # DELETE THIS LINE AFTER DEVELOPING RANDOM FISH CREATING
-        self.create_lucky() # DELETE THIS LINE AFTER DEVELOPING RANDOM FISH CREATING
         self.bg1_x = 0
         self.bg2_x = BACKGROUND.get_width()
+        self.frames = 0 # it is responsible for current time in the game (frames / fps = time [s])
+        self.frames_to_load_projectile = 0 # it is linked with const FRAMES_TO_LOAD_PROJECTILE_THRESHOLD
         
     def update(self):
+        # current time
+        self.frames += 1
+
+        # time to load the projectile to launch it
+        self.frames_to_load_projectile += 1
+
+        # cyclic randomize with creating enemies
+        if FISH_CALLING_FREQUENCY_FACTOR * self.frames % FPS == 0:
+            print('seconds: ' + str(self.frames / FPS))
+            RANDOM_FISH = random.choice(range(4))
+            if RANDOM_FISH == 0:
+                self.create_angler()
+            elif RANDOM_FISH == 1:
+                self.create_drone()
+            elif RANDOM_FISH == 2:
+                self.create_hivewhale()
+            else:
+                self.create_lucky()
+            
+            print('number of enemies: ' + str(len(self.enemies)))
+            #print('number of projectiles: ' + str(len(self.player.projectiles)))
+
         # player
         if self.player:
             self.player.change_state()
@@ -34,7 +54,7 @@ class Game():
                         self.player.projectiles.remove(p) # delete projectile after collision
                         self.initiate_explosion(e.x, e.y) # initiate smoke or fire explosion
                         self.enemies.remove(e) # delete the enemy because it exploded
-                        self.create_lucky() # DELETE THIS LINE AFTER DEVELOPING RANDOM FISH CREATING
+                        break
                 else:
                     p.move()
         
@@ -45,7 +65,6 @@ class Game():
             # delete if it is out of screen
             if e.x < 0 - e.IMG.get_width()//2:
                 self.enemies.remove(e)
-                self.create_angler() # DELETE THIS LINE AFTER DEVELOPING RANDOM FISH CREATING
 
         # explosions
         for e in self.explosions:

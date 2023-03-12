@@ -1,5 +1,5 @@
 import pygame
-from sh.constants import WIDTH, HEIGHT, FPS
+from sh.constants import WIDTH, HEIGHT, FPS, FRAMES_TO_LOAD_PROJECTILE_THRESHOLD
 from sh.game import Game
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -25,7 +25,9 @@ def main():
             # projectile launching trigger
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    game.player.launch_projectile()
+                    if game.frames_to_load_projectile >= FRAMES_TO_LOAD_PROJECTILE_THRESHOLD:
+                        game.player.launch_projectile()
+                        game.frames_to_load_projectile = 0
 
         # player steering trigger
         keys = pygame.key.get_pressed() # zwraca slownik z wartosciami typu bool

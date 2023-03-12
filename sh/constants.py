@@ -10,13 +10,15 @@ WIDTH, HEIGHT = 1000, 500
 # colors
 WHITE = (255, 255, 255)
 
-# boundaries
+# boundaries and thresholds
 UPPER_BOUNDARY = 10
 BOTTOM_BOUNDARY = 450
+FRAMES_TO_LOAD_PROJECTILE_THRESHOLD = 15 # it is linked with var frames_to_load_projectile in the Game class
 
 # factors
 DIM_FACTOR = 0.8 # it decreases the base distance for collision detection method to make it more realistic and precisely
 REPLICATE_FACTOR = 3 # it extends the lifetime of a single animation (positive int only)
+FISH_CALLING_FREQUENCY_FACTOR = 2.0  # FCFF - it multiplies frequency of creating a single enemy (fish) on the screen
 
 # background
 BACKGROUND = load('assets/background.png') # 1768x500px
