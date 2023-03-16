@@ -23,6 +23,7 @@ class Hivewhale(Sprite):
     def __init__(self, x, y):
         super().__init__(IMG_LIST=HIVEWHALE_LIST, TYPE='HIVEWHALE', x=x, y=y)
         self.dX = 2
+        self.lives = 4
     
     # movement
     def move(self):

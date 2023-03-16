@@ -55,7 +55,13 @@ class Game():
                 for e in self.enemies:
                     if self.collision_detection(p, e): # check if it is collision with an enemy
                         self.player.projectiles.remove(p) # delete projectile after collision
+                        if e.TYPE == 'HIVEWHALE':
+                            e.lives -= 1
+                            if e.lives > 0:
+                                break
                         self.initiate_explosion(e.x, e.y) # initiate smoke or fire explosion
+                        if e.TYPE == 'HIVEWHALE':
+                            self.create_4_drones(e.x, e.y, e.IMG) # create 4 drones after Hivewhale's death
                         self.enemies.remove(e) # delete the enemy because it exploded
                         break
                 else:
@@ -143,6 +149,15 @@ class Game():
         else:
             self.explosions.append(FireExplosion(x, y))
         
+    def create_4_drones(self, x, y, img):
+        x1 = x + img.get_width()//4
+        y1 = y + img.get_height()//4
+        y2 = y - img.get_height()//4
+        self.enemies.append(Drone(x1, y1))
+        self.enemies.append(Drone(x1, y2))
+        self.enemies.append(Drone(x, y1))
+        self.enemies.append(Drone(x, y2))
+
     def collision_detection(self, obj1, obj2):
         if obj1.TYPE == 'PROJECTILE' and (obj2.TYPE == 'ANGLER' or obj2.TYPE == 'DRONE'\
                 or obj2.TYPE == 'LUCKY'):
