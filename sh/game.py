@@ -1,6 +1,7 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
-    ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR
+    ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR, \
+    LUCKY_FISH_PERCENTAGE
 from .player import Player
 from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
@@ -28,15 +29,17 @@ class Game():
         # cyclic randomize with creating enemies
         if FISH_CALLING_FREQUENCY_FACTOR * self.frames % FPS == 0:
             print('seconds: ' + str(self.frames / FPS))
-            RANDOM_FISH = random.choice(range(4))
-            if RANDOM_FISH == 0:
-                self.create_angler()
-            elif RANDOM_FISH == 1:
-                self.create_drone()
-            elif RANDOM_FISH == 2:
-                self.create_hivewhale()
-            else:
+            RANDOM_FISH = random.choice(range(100))
+            if RANDOM_FISH in range(LUCKY_FISH_PERCENTAGE):
                 self.create_lucky()
+            else:
+                RANDOM_FISH = random.choice(range(3))
+                if RANDOM_FISH == 0:
+                    self.create_angler()
+                elif RANDOM_FISH == 1:
+                    self.create_drone()
+                else:
+                    self.create_hivewhale()
             
             print('number of enemies: ' + str(len(self.enemies)))
             #print('number of projectiles: ' + str(len(self.player.projectiles)))
