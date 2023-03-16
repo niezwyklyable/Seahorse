@@ -1,7 +1,7 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
     ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR, \
-    LUCKY_FISH_PERCENTAGE
+    LUCKY_FISH_PERCENTAGE, DOUBLE_SHOOTING_FRAMES_THRESHOLD
 from .player import Player
 from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
@@ -18,6 +18,7 @@ class Game():
         self.bg2_x = BACKGROUND.get_width()
         self.frames = 0 # it is responsible for current time in the game (frames / fps = time [s])
         self.frames_to_load_projectile = 0 # it is linked with const FRAMES_TO_LOAD_PROJECTILE_THRESHOLD
+        self.frames_to_change_mode = 0 # it is linked with const DOUBLE_SHOOTING_FRAMES_THRESHOLD
         
     def update(self):
         # current time
@@ -66,9 +67,22 @@ class Game():
                         break
                 else:
                     p.move()
-        
+
+            # change Player's mode from double shooting to single shooting
+            if self.player.double_shooting_mode:
+                self.frames_to_change_mode += 1 # update bonus time
+                if self.frames_to_change_mode >= DOUBLE_SHOOTING_FRAMES_THRESHOLD:
+                    self.player.change_mode_to_single_shooting()    
+
         # enemies
         for e in self.enemies:
+            if self.collision_detection(self.player, e):
+                    # lucky fish collision effect
+                    if not self.player.double_shooting_mode:
+                        self.player.change_mode_to_double_shooting() # change Player mode to double shooting
+                    self.frames_to_change_mode = 0 # reset time of the bonus
+                    self.enemies.remove(e) # delete the Lucky fish because it interacted with the Player
+                    break
             e.change_state()
             e.move()
             # delete if it is out of screen
@@ -170,6 +184,12 @@ class Game():
             # check distances between positions of two objects in a range of the bigger object
             if abs(obj1.x - obj2.x) <= obj2.IMG.get_width()//2 and \
                 abs(obj1.y - obj2.y) <= obj2.IMG.get_height()//2:
+                return True
+            
+        if obj1.TYPE == 'PLAYER' and obj2.TYPE == 'LUCKY':
+            # check distances between positions of two objects in a range of both objects
+            if abs(obj1.x - obj2.x) <= (obj1.IMG.get_width()//2 + obj2.IMG.get_width()//2)*DIM_FACTOR and \
+                abs(obj1.y - obj2.y) <= (obj1.IMG.get_height()//2 + obj2.IMG.get_height()//2)*DIM_FACTOR:
                 return True
             
         return False
