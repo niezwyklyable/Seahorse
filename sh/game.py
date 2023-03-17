@@ -19,6 +19,7 @@ class Game():
         self.frames = 0 # it is responsible for current time in the game (frames / fps = time [s])
         self.frames_to_load_projectile = 0 # it is linked with const FRAMES_TO_LOAD_PROJECTILE_THRESHOLD
         self.frames_to_change_mode = 0 # it is linked with const DOUBLE_SHOOTING_FRAMES_THRESHOLD
+        self.score = 0
         
     def update(self):
         # current time
@@ -42,7 +43,9 @@ class Game():
                 else:
                     self.create_hivewhale()
             
-            print('number of enemies: ' + str(len(self.enemies)))
+            print('Score: ' + str(self.score))
+            print('Time to left: ' + str(30-int(self.frames/FPS)))
+            #print('number of enemies: ' + str(len(self.enemies)))
             #print('number of projectiles: ' + str(len(self.player.projectiles)))
 
         # player
@@ -63,6 +66,7 @@ class Game():
                         self.initiate_explosion(e.x, e.y) # initiate smoke or fire explosion
                         if e.TYPE == 'HIVEWHALE':
                             self.create_4_drones(e.x, e.y, e.IMG) # create 4 drones after Hivewhale's death
+                        self.score += e.reward # add points to score for killing an enemy
                         self.enemies.remove(e) # delete the enemy because it exploded
                         break
                 else:
@@ -77,12 +81,14 @@ class Game():
         # enemies
         for e in self.enemies:
             if self.collision_detection(self.player, e):
-                    # lucky fish collision effect
+                if e.TYPE == 'LUCKY': # lucky fish collision effect
                     if not self.player.double_shooting_mode:
                         self.player.change_mode_to_double_shooting() # change Player mode to double shooting
                     self.frames_to_change_mode = 0 # reset time of the bonus
-                    self.enemies.remove(e) # delete the Lucky fish because it interacted with the Player
-                    break
+                else: # every other fish type effect
+                    self.score -= 1
+                self.enemies.remove(e) # delete the fish because it interacted with the Player
+                continue
             e.change_state()
             e.move()
             # delete if it is out of screen
@@ -186,10 +192,16 @@ class Game():
                 abs(obj1.y - obj2.y) <= obj2.IMG.get_height()//2:
                 return True
             
-        if obj1.TYPE == 'PLAYER' and obj2.TYPE == 'LUCKY':
+        if obj1.TYPE == 'PLAYER' and (obj2.TYPE == 'LUCKY' or obj2.TYPE == 'ANGLER' or obj2.TYPE == 'DRONE'):
             # check distances between positions of two objects in a range of both objects
             if abs(obj1.x - obj2.x) <= (obj1.IMG.get_width()//2 + obj2.IMG.get_width()//2)*DIM_FACTOR and \
                 abs(obj1.y - obj2.y) <= (obj1.IMG.get_height()//2 + obj2.IMG.get_height()//2)*DIM_FACTOR:
+                return True
+            
+        if obj1.TYPE == 'PLAYER' and obj2.TYPE == 'HIVEWHALE':
+            # check distances between positions of two objects in a range of both objects
+            if abs(obj1.x - obj2.x) <= obj1.IMG.get_width()//2*DIM_FACTOR + obj2.IMG.get_width()//2 and \
+                abs(obj1.y - obj2.y) <= obj1.IMG.get_height()//2*DIM_FACTOR + obj2.IMG.get_height()//2:
                 return True
             
         return False

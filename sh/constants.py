@@ -20,7 +20,7 @@ DOUBLE_SHOOTING_FRAMES_THRESHOLD = 360 # the amount of frames that after them th
 DIM_FACTOR = 0.8 # it decreases the base distance for collision detection method to make it more realistic and precisely
 REPLICATE_FACTOR = 3 # it extends the lifetime of a single animation (positive int only)
 FISH_CALLING_FREQUENCY_FACTOR = 1.0  # FCFF - it multiplies frequency of creating a single enemy (fish) on the screen
-LUCKY_FISH_PERCENTAGE = 30 # probability of calling a Lucky fish type [%] (only int in range from 1 to 100 inclusive)
+LUCKY_FISH_PERCENTAGE = 10 # probability of calling a Lucky fish type [%] (only int in range from 1 to 100 inclusive)
 
 # background
 BACKGROUND = load('assets/background.png') # 1768x500px
