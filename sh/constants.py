@@ -9,12 +9,15 @@ WIDTH, HEIGHT = 1000, 500
 
 # colors
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 # boundaries and thresholds
 UPPER_BOUNDARY = 10
 BOTTOM_BOUNDARY = 450
 FRAMES_TO_LOAD_PROJECTILE_THRESHOLD = 15 # it is linked with var frames_to_load_projectile in the Game class
 DOUBLE_SHOOTING_FRAMES_THRESHOLD = 360 # the amount of frames that after them the Player's mode changes to single shooting
+PLAY_TIME = 30 # total time of the game [s]
+SCORE_GOAL = 100 # minimum score to achieve to win the game
 
 # factors
 DIM_FACTOR = 0.8 # it decreases the base distance for collision detection method to make it more realistic and precisely

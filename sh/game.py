@@ -1,7 +1,7 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
     ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR, \
-    LUCKY_FISH_PERCENTAGE, DOUBLE_SHOOTING_FRAMES_THRESHOLD
+    LUCKY_FISH_PERCENTAGE, DOUBLE_SHOOTING_FRAMES_THRESHOLD, PLAY_TIME, SCORE_GOAL, BLACK, HEIGHT
 from .player import Player
 from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
@@ -20,6 +20,10 @@ class Game():
         self.frames_to_load_projectile = 0 # it is linked with const FRAMES_TO_LOAD_PROJECTILE_THRESHOLD
         self.frames_to_change_mode = 0 # it is linked with const DOUBLE_SHOOTING_FRAMES_THRESHOLD
         self.score = 0
+        self.gameover = False # it disables some things after the end of the game
+        self.text1 = '' # it contains info about game score and appears on the screen all the time
+        self.text2 = '' # it contains info about time to left and appears on the screen all the time
+        self.msg = '' # the message that will show on the center of the screen after the end of the game
         
     def update(self):
         # current time
@@ -43,8 +47,6 @@ class Game():
                 else:
                     self.create_hivewhale()
             
-            print('Score: ' + str(self.score))
-            print('Time to left: ' + str(30-int(self.frames/FPS)))
             #print('number of enemies: ' + str(len(self.enemies)))
             #print('number of projectiles: ' + str(len(self.player.projectiles)))
 
@@ -80,7 +82,7 @@ class Game():
 
         # enemies
         for e in self.enemies:
-            if self.collision_detection(self.player, e):
+            if not self.gameover and self.collision_detection(self.player, e):
                 if e.TYPE == 'LUCKY': # lucky fish collision effect
                     if not self.player.double_shooting_mode:
                         self.player.change_mode_to_double_shooting() # change Player mode to double shooting
@@ -101,6 +103,17 @@ class Game():
                 e.change_state()
             else:
                 self.explosions.remove(e) # delete an explosion from the list if it ends its animation
+
+        # win and lose conditions
+        if not self.gameover and self.frames / FPS >= PLAY_TIME:
+            self.gameover = True
+            font = pygame.font.SysFont('comicsans', 40)
+            if self.score >= SCORE_GOAL:
+                self.msg = font.render(f'YOU WON!, YOUR SCORE: {self.score}/{SCORE_GOAL}',\
+                                       1, WHITE, BLACK)
+            else:
+                self.msg = font.render(f'YOU LOST!, YOUR SCORE: {self.score}/{SCORE_GOAL}',\
+                                       1, WHITE, BLACK)
 
     def render(self):
         # background
@@ -128,6 +141,9 @@ class Game():
         # explosions
         for e in self.explosions:
             e.draw(self.win)
+
+        # verbose
+        self.show_info()
 
         pygame.display.update()
 
@@ -177,6 +193,19 @@ class Game():
         self.enemies.append(Drone(x1, y2))
         self.enemies.append(Drone(x, y1))
         self.enemies.append(Drone(x, y2))
+
+    def show_info(self):
+        font = pygame.font.SysFont('comicsans', 30)
+
+        if not self.gameover:
+            self.text1 = font.render(f'Score: {self.score}/{SCORE_GOAL}', 1, WHITE)
+            self.text2 = font.render('Time to left: {:.1f}s'.format(PLAY_TIME-self.frames/FPS), 1, WHITE)
+        self.win.blit(self.text1, (20, 0))
+        self.win.blit(self.text2, (300, 0))
+
+        if self.gameover:
+            self.win.blit(self.msg, (int(WIDTH/2 - self.msg.get_width()/2), \
+                int(HEIGHT/2 - self.msg.get_height()/2)))
 
     def collision_detection(self, obj1, obj2):
         if obj1.TYPE == 'PROJECTILE' and (obj2.TYPE == 'ANGLER' or obj2.TYPE == 'DRONE'\

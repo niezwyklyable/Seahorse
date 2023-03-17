@@ -9,7 +9,7 @@ def main():
     clock = pygame.time.Clock()
     run = True
     game = Game(WIN)
-    #pygame.init()
+    pygame.init() # it is needed for font module initialization
 
     while run:
         clock.tick(FPS)
@@ -23,18 +23,20 @@ def main():
                 print(pos)
 
             # projectile launching trigger
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if game.frames_to_load_projectile >= FRAMES_TO_LOAD_PROJECTILE_THRESHOLD:
-                        game.player.launch_projectile()
-                        game.frames_to_load_projectile = 0
+            if not game.gameover:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        if game.frames_to_load_projectile >= FRAMES_TO_LOAD_PROJECTILE_THRESHOLD:
+                            game.player.launch_projectile()
+                            game.frames_to_load_projectile = 0
 
         # player steering trigger
-        keys = pygame.key.get_pressed() # zwraca slownik z wartosciami typu bool
-        if keys[pygame.K_w]:
-            game.player.move('up')
-        elif keys[pygame.K_s]:
-            game.player.move('down')
+        if not game.gameover:
+            keys = pygame.key.get_pressed() # zwraca slownik z wartosciami typu bool
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
+                game.player.move('up')
+            elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                game.player.move('down')
 
         game.update()
         game.render()
