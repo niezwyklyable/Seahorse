@@ -104,16 +104,22 @@ class Game():
             else:
                 self.explosions.remove(e) # delete an explosion from the list if it ends its animation
 
+        # score and time info
+        if not self.gameover:
+            font = pygame.font.SysFont('comicsans', 30)
+            self.text1 = font.render(f'Score: {self.score}/{SCORE_GOAL}', 1, WHITE)
+            self.text2 = font.render('Time to left: {:.1f}s'.format(PLAY_TIME-self.frames/FPS), 1, WHITE)
+        
         # win and lose conditions
         if not self.gameover and self.frames / FPS >= PLAY_TIME:
             self.gameover = True
             font = pygame.font.SysFont('comicsans', 40)
             if self.score >= SCORE_GOAL:
                 self.msg = font.render(f'YOU WON!, YOUR SCORE: {self.score}/{SCORE_GOAL}',\
-                                       1, WHITE, BLACK)
+                                    1, WHITE, BLACK)
             else:
                 self.msg = font.render(f'YOU LOST!, YOUR SCORE: {self.score}/{SCORE_GOAL}',\
-                                       1, WHITE, BLACK)
+                                    1, WHITE, BLACK)
 
     def render(self):
         # background
@@ -195,13 +201,8 @@ class Game():
         self.enemies.append(Drone(x, y2))
 
     def show_info(self):
-        font = pygame.font.SysFont('comicsans', 30)
-
-        if not self.gameover:
-            self.text1 = font.render(f'Score: {self.score}/{SCORE_GOAL}', 1, WHITE)
-            self.text2 = font.render('Time to left: {:.1f}s'.format(PLAY_TIME-self.frames/FPS), 1, WHITE)
-        self.win.blit(self.text1, (20, 0))
-        self.win.blit(self.text2, (300, 0))
+        self.win.blit(self.text1, (20, HEIGHT-self.text1.get_height()))
+        self.win.blit(self.text2, (300, HEIGHT-self.text1.get_height()))
 
         if self.gameover:
             self.win.blit(self.msg, (int(WIDTH/2 - self.msg.get_width()/2), \
