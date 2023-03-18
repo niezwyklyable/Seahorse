@@ -18,6 +18,7 @@ FRAMES_TO_LOAD_PROJECTILE_THRESHOLD = 15 # it is linked with var frames_to_load_
 DOUBLE_SHOOTING_FRAMES_THRESHOLD = 360 # the amount of frames that after them the Player's mode changes to single shooting
 PLAY_TIME = 30 # total time of the game [s]
 SCORE_GOAL = 100 # minimum score to achieve to win the game
+NUM_OF_GEARS = 4 # the number of gears that will be created after some fish die
 
 # factors
 DIM_FACTOR = 0.8 # it decreases the base distance for collision detection method to make it more realistic and precisely
@@ -75,3 +76,10 @@ FIRE_EXPLOSION_LIST = []
 for i in range(1600//200):
     for j in range(REPLICATE_FACTOR):
         FIRE_EXPLOSION_LIST.append(FIRE_EXPLOSION.subsurface(i*200, 0, 200, 200))
+
+# gears
+GEARS = load('assets/gears.png')
+GEARS_LIST = []
+for i in range(150//50):
+    for j in range(150//50):
+        GEARS_LIST.append(GEARS.subsurface(i*50, j*50, 50, 50))

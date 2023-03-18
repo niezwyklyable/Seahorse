@@ -1,11 +1,13 @@
 import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
     ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR, \
-    LUCKY_FISH_PERCENTAGE, DOUBLE_SHOOTING_FRAMES_THRESHOLD, PLAY_TIME, SCORE_GOAL, BLACK, HEIGHT
+    LUCKY_FISH_PERCENTAGE, DOUBLE_SHOOTING_FRAMES_THRESHOLD, PLAY_TIME, SCORE_GOAL, BLACK, HEIGHT, \
+    NUM_OF_GEARS
 from .player import Player
 from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
 from .explosions import SmokeExplosion, FireExplosion
+from .gears import Gear
 
 class Game():
     def __init__(self, win):
@@ -13,6 +15,7 @@ class Game():
         self.player = None
         self.enemies = []
         self.explosions = []
+        self.gears = []
         self.create_player()
         self.bg1_x = 0
         self.bg2_x = BACKGROUND.get_width()
@@ -66,6 +69,7 @@ class Game():
                             if e.lives > 0:
                                 break
                         self.initiate_explosion(e.x, e.y) # initiate smoke or fire explosion
+                        self.create_gears(e.x, e.y)
                         if e.TYPE == 'HIVEWHALE':
                             self.create_4_drones(e.x, e.y, e.IMG) # create 4 drones after Hivewhale's death
                         self.score += e.reward # add points to score for killing an enemy
@@ -148,6 +152,10 @@ class Game():
         for e in self.explosions:
             e.draw(self.win)
 
+        # gears
+        for g in self.gears:
+            g.draw(self.win)
+
         # verbose
         self.show_info()
 
@@ -199,6 +207,10 @@ class Game():
         self.enemies.append(Drone(x1, y2))
         self.enemies.append(Drone(x, y1))
         self.enemies.append(Drone(x, y2))
+
+    def create_gears(self, x, y):
+        for _ in range(NUM_OF_GEARS):
+            self.gears.append(Gear(x, y))
 
     def show_info(self):
         self.win.blit(self.text1, (20, HEIGHT-self.text1.get_height()))
