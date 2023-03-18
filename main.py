@@ -1,18 +1,28 @@
 import pygame
 from sh.constants import WIDTH, HEIGHT, FPS, FRAMES_TO_LOAD_PROJECTILE_THRESHOLD
 from sh.game import Game
+import pymunk
+from pymunk import pygame_util
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Seahorse by AW')
 
 def main():
+    # pymunk stuff
+    dt = 1/FPS
+    space = pymunk.Space()
+    space.gravity = (0, 981)
+    draw_options = pygame_util.DrawOptions(WIN)
+
+    # main settings
     clock = pygame.time.Clock()
     run = True
-    game = Game(WIN)
     pygame.init() # it is needed for font module initialization
+    game = Game(WIN, space, draw_options)
 
     while run:
         clock.tick(FPS)
+        space.step(dt)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

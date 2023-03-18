@@ -8,9 +8,10 @@ from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
 from .explosions import SmokeExplosion, FireExplosion
 from .gears import Gear
+#import pymunk
 
 class Game():
-    def __init__(self, win):
+    def __init__(self, win, space, draw_options):
         self.win = win
         self.player = None
         self.enemies = []
@@ -27,7 +28,10 @@ class Game():
         self.text1 = '' # it contains info about game score and appears on the screen all the time
         self.text2 = '' # it contains info about time to left and appears on the screen all the time
         self.msg = '' # the message that will show on the center of the screen after the end of the game
-        
+        self.space = space # pymunk stuff (virtual environment)
+        self.draw_options = draw_options # pymunk stuff (responsible for rendering objects in the space)
+        #self.create_floor() # pymunk stuff (creating a rectangular shape needed for bouncing effects)
+
     def update(self):
         # current time
         self.frames += 1
@@ -108,6 +112,16 @@ class Game():
             else:
                 self.explosions.remove(e) # delete an explosion from the list if it ends its animation
 
+        # gears
+        for g in self.gears:
+            # passing coordinates from the space to the real x, y coords of the gears
+            g.x = g.body.position[0]
+            g.y = g.body.position[1]
+            # delete if it is out of screen
+            if g.y > HEIGHT + g.IMG.get_height()//2:
+                self.space.remove(g.shape, g.body)
+                self.gears.remove(g)
+
         # score and time info
         if not self.gameover:
             font = pygame.font.SysFont('comicsans', 30)
@@ -137,6 +151,10 @@ class Game():
         if self.bg2_x <= -BACKGROUND.get_width():
             self.bg2_x = BACKGROUND.get_width()
 
+        # gears
+        for g in self.gears:
+            g.draw(self.win)
+
         # player
         if self.player:
             self.player.draw(self.win)
@@ -152,13 +170,10 @@ class Game():
         for e in self.explosions:
             e.draw(self.win)
 
-        # gears
-        for g in self.gears:
-            g.draw(self.win)
-
         # verbose
         self.show_info()
 
+        #self.space.debug_draw(self.draw_options) # temporarily visualization
         pygame.display.update()
 
     def create_player(self):
@@ -210,7 +225,17 @@ class Game():
 
     def create_gears(self, x, y):
         for _ in range(NUM_OF_GEARS):
-            self.gears.append(Gear(x, y))
+            self.gears.append(Gear(x, y, self.space))
+
+    # an invisible rectangle at the bottom of the screen which collides with the gears and makes them bounce
+    # def create_floor(self):
+    #     body = pymunk.Body(body_type=pymunk.Body.STATIC) # static body does not have mass
+    #     body.position = (WIDTH//2, HEIGHT-50//2) # central pos x and y
+    #     shape = pymunk.Poly.create_box(body, (WIDTH, 50)) # a rectangle with w and h dims
+    #     shape.color = (255, 0, 0, 100) # if not specified it is just grey
+    #     shape.elasticity = 0.4
+    #     shape.friction = 0.5
+    #     self.space.add(body, shape)
 
     def show_info(self):
         self.win.blit(self.text1, (20, HEIGHT-self.text1.get_height()))
