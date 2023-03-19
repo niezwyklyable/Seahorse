@@ -19,6 +19,7 @@ DOUBLE_SHOOTING_FRAMES_THRESHOLD = 360 # the amount of frames that after them th
 PLAY_TIME = 30 # total time of the game [s]
 SCORE_GOAL = 100 # minimum score to achieve to win the game
 NUM_OF_GEARS = 4 # the number of gears that will be created after some fish die
+BOUNCING_THRESHOLD = 3 # the number of gear bounces the floor after they cannot collide each other again
 
 # factors
 DIM_FACTOR = 0.8 # it decreases the base distance for collision detection method to make it more realistic and precisely

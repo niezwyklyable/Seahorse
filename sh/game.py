@@ -2,13 +2,13 @@ import pygame
 from .constants import WHITE, BACKGROUND, WIDTH, BOTTOM_BOUNDARY, UPPER_BOUNDARY, \
     ANGLER_LIST, DIM_FACTOR, DRONE_LIST, HIVEWHALE_LIST, LUCKY_LIST, FPS, FISH_CALLING_FREQUENCY_FACTOR, \
     LUCKY_FISH_PERCENTAGE, DOUBLE_SHOOTING_FRAMES_THRESHOLD, PLAY_TIME, SCORE_GOAL, BLACK, HEIGHT, \
-    NUM_OF_GEARS
+    NUM_OF_GEARS, BOUNCING_THRESHOLD
 from .player import Player
 from .enemies import Angler, Drone, Hivewhale, Lucky
 import random
 from .explosions import SmokeExplosion, FireExplosion
 from .gears import Gear
-#import pymunk
+import pymunk
 
 class Game():
     def __init__(self, win, space, draw_options):
@@ -30,7 +30,7 @@ class Game():
         self.msg = '' # the message that will show on the center of the screen after the end of the game
         self.space = space # pymunk stuff (virtual environment)
         self.draw_options = draw_options # pymunk stuff (responsible for rendering objects in the space)
-        #self.create_floor() # pymunk stuff (creating a rectangular shape needed for bouncing effects)
+        self.create_floor() # pymunk stuff (creating a rectangular shape needed for bouncing effects)
 
     def update(self):
         # current time
@@ -41,7 +41,6 @@ class Game():
 
         # cyclic randomize with creating enemies
         if FISH_CALLING_FREQUENCY_FACTOR * self.frames % FPS == 0:
-            print('seconds: ' + str(self.frames / FPS))
             RANDOM_FISH = random.choice(range(100))
             if RANDOM_FISH in range(LUCKY_FISH_PERCENTAGE):
                 self.create_lucky()
@@ -53,9 +52,6 @@ class Game():
                     self.create_drone()
                 else:
                     self.create_hivewhale()
-            
-            #print('number of enemies: ' + str(len(self.enemies)))
-            #print('number of projectiles: ' + str(len(self.player.projectiles)))
 
         # player
         if self.player:
@@ -114,12 +110,23 @@ class Game():
 
         # gears
         for g in self.gears:
-            # passing coordinates from the space to the real x, y coords of the gears
-            g.x = g.body.position[0]
-            g.y = g.body.position[1]
+            if not g.removed_from_space:
+                # passing coordinates from the space to the real x, y coords of the gears
+                g.x = g.body.position[0]
+                g.y = g.body.position[1]
+                # check collision with the floor (limited bouncing effect)
+                if g.y >= HEIGHT-50 - g.IMG.get_height()//2:
+                    g.body.position = (g.x, HEIGHT-50 - g.IMG.get_height()//2) # thanks to this alignment, the gear does not stuck in above condition (does bouncing)
+                    g.bounce_counter += 1
+                    # remove the gear from the space after a few bounces but do not delete the gear itself yet
+                    if g.bounce_counter >= BOUNCING_THRESHOLD:
+                        self.space.remove(g.shape, g.body)
+                        g.removed_from_space = True
+            else:
+                g.move() # it will be falling until it is out of screen
+
             # delete if it is out of screen
             if g.y > HEIGHT + g.IMG.get_height()//2:
-                self.space.remove(g.shape, g.body)
                 self.gears.remove(g)
 
         # score and time info
@@ -173,7 +180,7 @@ class Game():
         # verbose
         self.show_info()
 
-        #self.space.debug_draw(self.draw_options) # temporarily visualization
+        #self.space.debug_draw(self.draw_options) # temporarily visualization objects from the space
         pygame.display.update()
 
     def create_player(self):
@@ -228,14 +235,14 @@ class Game():
             self.gears.append(Gear(x, y, self.space))
 
     # an invisible rectangle at the bottom of the screen which collides with the gears and makes them bounce
-    # def create_floor(self):
-    #     body = pymunk.Body(body_type=pymunk.Body.STATIC) # static body does not have mass
-    #     body.position = (WIDTH//2, HEIGHT-50//2) # central pos x and y
-    #     shape = pymunk.Poly.create_box(body, (WIDTH, 50)) # a rectangle with w and h dims
-    #     shape.color = (255, 0, 0, 100) # if not specified it is just grey
-    #     shape.elasticity = 0.4
-    #     shape.friction = 0.5
-    #     self.space.add(body, shape)
+    def create_floor(self):
+        body = pymunk.Body(body_type=pymunk.Body.STATIC) # static body does not have mass
+        body.position = (WIDTH//2, HEIGHT-50//2) # central pos x and y
+        shape = pymunk.Poly.create_box(body, (WIDTH, 50)) # a rectangle with w and h dims
+        shape.color = (255, 0, 0, 100) # if not specified it is just grey
+        shape.elasticity = 0.4
+        shape.friction = 0.5
+        self.space.add(body, shape)
 
     def show_info(self):
         self.win.blit(self.text1, (20, HEIGHT-self.text1.get_height()))
